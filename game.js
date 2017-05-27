@@ -51,7 +51,7 @@ var pong = {
         document.removeEventListener("keyup", this.onKeyUp);
       },
       update: function () {
-        // ... scene update logic
+        // ... no implementatio required.
       },
       draw: function (ctx) {
         // clear the current contents from the canvas.
