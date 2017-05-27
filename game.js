@@ -16,6 +16,9 @@ var pong = {
       throw Error("Unable to get 2D draw context from the canvas");
     }
 
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+
     // set the welcome scene as the initial scene.
     this.setScene(this.scenes.welcome);
   },
@@ -43,7 +46,22 @@ var pong = {
         // ... scene update logic
       },
       draw: function (ctx) {
-        // ... scene draw logic
+        // clear the current contents from the canvas.
+        ctx.clearRect(0, 0, 800, 600);
+
+        // draw the application name string.
+        ctx.font = "32pt Arial";
+        ctx.fillText("HTML5 PONG", 400, 100);
+
+        // draw the controls string.
+        ctx.font = "18pt Arial";
+        ctx.fillText("Controls for the left player:", 400, 200)
+        ctx.fillText("W and S", 400, 240);
+        ctx.fillText("Controls for the right player:", 400, 300);
+        ctx.fillText("UP-ARROW and DOWN-ARROW", 400, 340);
+
+        // draw the instructions how to proceed text.
+        ctx.fillText("-- Press [ENTER] to start the match --", 400, 500);
       }
     },
     court: {
@@ -54,7 +72,7 @@ var pong = {
         // ... scene update logic
       },
       draw: function (ctx) {
-        // ... scene draw logic
+        ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
       }
     },
     result: {
@@ -65,7 +83,7 @@ var pong = {
         // ... scene update logic
       },
       draw: function (ctx) {
-        // ... scene draw logic
+        ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
       }
     }
   }
