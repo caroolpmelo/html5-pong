@@ -44,11 +44,11 @@ var pong = {
   },
   scenes: {
     welcome: {
-      enter: function () {
-        // ... scene initialization logic
+      enter: function (parent) {
+        document.addEventListener("keyup", this.onKeyUp);
       },
       exit: function () {
-        // ... scene cleanup logic
+        document.removeEventListener("keyup", this.onKeyUp);
       },
       update: function () {
         // ... scene update logic
@@ -70,6 +70,12 @@ var pong = {
 
         // draw the instructions how to proceed text.
         ctx.fillText("-- Press [ENTER] to start the match --", 400, 500);
+      },
+      onKeyUp: function (event) {
+        // transition to court scene after an enter press.
+        if (event.keyCode == 13) {
+          pong.setScene(pong.scenes.court);
+        }
       }
     },
     court: {
