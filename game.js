@@ -20,11 +20,16 @@ var pong = {
     this.setScene(this.scenes.welcome);
   },
   run: function () {
+    // update and draw the current scene.
     this.scene.update();
     this.scene.draw(this.ctx);
+
+    // perform a trivial main loop iteration.
+    requestAnimationFrame(this.run.bind(this));
   },
   setScene: function (scene) {
     if (scene) {
+      // apply the new scene and call the scene init (reset).
       this.scene = scene;
       this.scene.enter();
     }
