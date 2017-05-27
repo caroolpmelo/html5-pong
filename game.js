@@ -32,6 +32,11 @@ var pong = {
   },
   setScene: function (scene) {
     if (scene) {
+      // perform a cleanup for the old scene (if defined).
+      if (this.scene) {
+        this.scene.exit();
+      }
+
       // apply the new scene and call the scene init (reset).
       this.scene = scene;
       this.scene.enter();
@@ -41,6 +46,9 @@ var pong = {
     welcome: {
       enter: function () {
         // ... scene initialization logic
+      },
+      exit: function () {
+        // ... scene cleanup logic
       },
       update: function () {
         // ... scene update logic
@@ -68,6 +76,9 @@ var pong = {
       enter: function () {
         // ... scene initialization logic
       },
+      exit: function () {
+        // ... scene cleanup logic
+      },
       update: function () {
         // ... scene update logic
       },
@@ -78,6 +89,9 @@ var pong = {
     result: {
       enter: function () {
         // ... scene initialization logic
+      },
+      exit: function () {
+        // ... scene cleanup logic
       },
       update: function () {
         // ... scene update logic
