@@ -1,6 +1,4 @@
 var pong = {
-  canvas: undefined,
-  ctx: undefined,
   start: function () {
     this.init();
     this.run();
@@ -17,10 +15,54 @@ var pong = {
     if (!this.ctx) {
       throw Error("Unable to get 2D draw context from the canvas");
     }
+
+    // set the welcome scene as the initial scene.
+    this.setScene(this.scenes.welcome);
   },
   run: function () {
-    // ...
-    this.ctx.fillRect(0,0,800,600);
+    this.scene.update();
+    this.scene.draw(this.ctx);
+  },
+  setScene: function (scene) {
+    if (scene) {
+      this.scene = scene;
+      this.scene.enter();
+    }
+  },
+  scenes: {
+    welcome: {
+      enter: function () {
+        // ... scene initialization logic
+      },
+      update: function () {
+        // ... scene update logic
+      },
+      draw: function (ctx) {
+        // ... scene draw logic
+      }
+    },
+    court: {
+      enter: function () {
+        // ... scene initialization logic
+      },
+      update: function () {
+        // ... scene update logic
+      },
+      draw: function (ctx) {
+        // ... scene draw logic
+      }
+    },
+    result: {
+      enter: function () {
+        // ... scene initialization logic
+      },
+      update: function () {
+        // ... scene update logic
+      },
+      draw: function (ctx) {
+        // ... scene draw logic
+      }
+    }
   }
 }
 
