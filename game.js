@@ -98,6 +98,7 @@ var pong = (function () {
     var bottomWall;
     var leftPaddle;
     var rightPaddle;
+    var ball;
 
     /**
      * A center line entity that contains the center line boxes.
@@ -156,7 +157,27 @@ var pong = (function () {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
       }
 
-      return { draw: draw }
+      return { draw: draw };
+
+    });
+
+    /**
+     * The ball entity that contains definitions for the game ball.
+     * @param {*} x The x-coordinate of the ball position.
+     * @param {*} y The y-coordinate of the ball position.
+     * @param {*} width The width of the ball.
+     * @param {*} height The height of the ball.
+     */
+    var ballBox = (function (x, y, width, height) {
+
+      var position = [x, y];
+      var size = [width, height];
+
+      function draw() {
+        ctx.fillRect(position[0], position[1], size[0], size[1]);
+      }
+
+      return { draw: draw };
 
     });
 
@@ -183,6 +204,12 @@ var pong = (function () {
       // calculate the position and size for the right paddle.
       position[0] = (canvas.width - EDGE_OFFSET - size[0]);
       rightPaddle = paddle(position[0], position[1], size[0], size[1]);
+
+      // calculate the position and size for the ball.
+      var halfBox = BOX_WIDTH / 2;
+      position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
+      size = [BOX_WIDTH, BOX_WIDTH];
+      ball = ballBox(position[0], position[1], size[0], size[1]);
     }
 
     /** A function that is called when the game exits the scene. */
@@ -210,6 +237,9 @@ var pong = (function () {
       // draw paddles.
       leftPaddle.draw();
       rightPaddle.draw();
+
+      // draw the ball.
+      ball.draw();
     }
 
     return {
