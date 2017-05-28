@@ -84,13 +84,105 @@ var pong = (function () {
    */
   var courtScene = (function () {
 
-    var wallSize;
-    var boxSize;
+    /** The width of the small boxes used around the scene. */
+    var BOX_WIDTH = 20;
+    /** The height for the top and bottom walls. */
+    var WALL_HEIGHT = BOX_WIDTH;
+    /** The height for the left and right paddles. */
+    var PADDLE_HEIGHT = 100;
+    /** A constant edge offset pixels for both paddles. */
+    var EDGE_OFFSET = 30;
+
+    var background;
+    var topWall;
+    var bottomWall;
+    var leftPaddle;
+    var rightPaddle;
+
+    /**
+     * A center line entity that contains the center line boxes.
+     *
+     * Note that this entity is not collideable and should not be used in any
+     * kind of game logic related stuff. It is only used to make the court to
+     * look more like a playfield similar to tennis or other ball games.
+     */
+    var centerLine = (function () {
+
+      function draw() {
+        var x = (canvasCenter[0] - BOX_WIDTH / 2);
+        for (var y = WALL_HEIGHT; y < canvas.height; y += (1.93 * BOX_WIDTH)) {
+          ctx.fillRect(x, y, BOX_WIDTH, BOX_WIDTH);
+        }
+      }
+
+      return { draw: draw };
+
+    });
+
+
+    /**
+     * A wall entity that contains definitions for the top and bottom walls.
+     * @param {*} x The x-coordinate of the wall position.
+     * @param {*} y The y-coordinate of the wall position.
+     * @param {*} width The width of the wall.
+     * @param {*} height The height of the wall.
+     */
+    var wall = (function (x, y, width, height) {
+
+      var position = [x, y];
+      var size = [width, height];
+
+      function draw() {
+        ctx.fillRect(position[0], position[1], size[0], size[1]);
+      }
+
+      return { draw: draw };
+
+    });
+
+    /**
+     * The paddle entity that contains definitions for a player paddle.
+     * @param {*} x The x-coordinate of the paddle position.
+     * @param {*} y The y-coordinate of the paddle position.
+     * @param {*} width The width of the paddle.
+     * @param {*} height The height of the paddle.
+     */
+    var paddle = (function (x, y, width, height) {
+
+      var position = [x, y];
+      var size = [width, height];
+
+      function draw() {
+        ctx.fillRect(position[0], position[1], size[0], size[1]);
+      }
+
+      return { draw: draw }
+
+    });
 
     /** A function that is called when the game enters the scene */
     function enter() {
-      wallSize = [canvas.width, 20];
-      boxSize = [20, 20];
+      // create a new background for the courtyard.
+      background = new centerLine();
+
+      // calculate the position and size for the top wall.
+      var position = [0, 0];
+      var size = [canvas.width, WALL_HEIGHT];
+      topWall = wall(0, 0, canvas.width, WALL_HEIGHT);
+
+      // calculate the position and size for the bottom wall.
+      position = [0, canvas.height - WALL_HEIGHT];
+      size = [canvas.width, WALL_HEIGHT];
+      bottomWall = wall(position[0], position[1], size[0], size[1]);
+
+      // calculate the position and size for the left paddle.
+      position = [EDGE_OFFSET, canvasCenter[1] - (PADDLE_HEIGHT / 2)];
+      size = [BOX_WIDTH, PADDLE_HEIGHT];
+      leftPaddle = paddle(position[0], position[1], size[0], size[1]);
+
+      // calculate the position and size for the right paddle.
+      position[0] = (canvas.width - EDGE_OFFSET - size[0]);
+      rightPaddle = paddle(position[0], position[1], size[0], size[1]);
     }
 
     /** A function that is called when the game exits the scene. */
@@ -109,14 +201,15 @@ var pong = (function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // draw the top and bottom wall.
-      ctx.fillRect(0, 0, wallSize[0], wallSize[1]);
-      ctx.fillRect(0, (canvas.height - wallSize[1]), wallSize[0], wallSize[1]);
+      topWall.draw();
+      bottomWall.draw();
 
       // draw the center line with small boxes.
-      var xPosition = (canvasCenter[0] - boxSize[0] / 2);
-      for (var y = wallSize[1]; y < canvas.height; y += (1.93 * boxSize[0])) {
-        ctx.fillRect(xPosition, y, boxSize[0], boxSize[1]);
-      }
+      background.draw();
+
+      // draw paddles.
+      leftPaddle.draw();
+      rightPaddle.draw();
     }
 
     return {
@@ -183,7 +276,7 @@ var pong = (function () {
     ctx.textAlign = "center";
 
     // set the welcome scene as the initial scene.
-    setScene(welcomeScene);
+    setScene(courtScene);
   }
 
   function run() {
