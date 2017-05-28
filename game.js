@@ -133,7 +133,6 @@ var pong = (function () {
        * @returns A boolean indicating whether AABBs intersect.
        */
       function intersects(o) {
-        console.log(center);
         var x = Math.abs(center[0] - o.center[0]) < (extent[0] + o.extent[0]);
         var y = Math.abs(center[1] - o.center[1]) < (extent[1] + o.extent[1]);
         return x && y;
