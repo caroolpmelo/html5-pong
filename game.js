@@ -79,6 +79,8 @@ var pong = {
       }
     },
     court: {
+      WALL_HEIGHT: 20,
+      SMALL_BOX_EDGE_LENGTH: 20,
       enter: function () {
         // ... scene initialization logic
       },
@@ -89,7 +91,18 @@ var pong = {
         // ... scene update logic
       },
       draw: function (ctx) {
-        ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+        // clear the current contents from the canvas.
+        ctx.clearRect(0, 0, 800, 600);
+
+        // draw the top and bottom wall.
+        ctx.fillRect(0, 0, 800, this.WALL_HEIGHT);
+        ctx.fillRect(0, (600 - this.WALL_HEIGHT), 800, this.WALL_HEIGHT);
+
+        // draw the center line with small boxes.
+        var xPosition = (400 - this.SMALL_BOX_EDGE_LENGTH / 2);
+        for (var y = this.WALL_HEIGHT; y < 600; y += (1.93 * this.SMALL_BOX_EDGE_LENGTH)) {
+          ctx.fillRect(xPosition, y, this.SMALL_BOX_EDGE_LENGTH, this.SMALL_BOX_EDGE_LENGTH);
+        }
       }
     },
     result: {
