@@ -113,6 +113,52 @@ var pong = (function () {
     var ball;
 
     /**
+     * An Axis Aligned Bounding Box implementation for the game.
+     * @param {*} x The x-coordinate (top-left-draw-start) point of the object.
+     * @param {*} y The y-coordinate (top-left-draw-start) point of the object.
+     * @param {*} width The width of the object.
+     * @param {*} height The height of the object.
+     */
+    var AABB = (function (x, y, width, height) {
+
+      /** The center point of the box. */
+      var center = [x + (width / 2), y + (height / 2)];
+      /** The extent of the box. */
+      var extent = [width / 2, height / 2];
+
+      /**
+       * Check whether the AABB intersects with an another AABB.
+       *
+       * @param {*} o An another AABB to check intersection with.
+       * @returns A boolean indicating whether AABBs intersect.
+       */
+      function intersects(o) {
+        console.log(center);
+        var x = Math.abs(center[0] - o.center[0]) < (extent[0] + o.extent[0]);
+        var y = Math.abs(center[1] - o.center[1]) < (extent[1] + o.extent[1]);
+        return x && y;
+      }
+
+      /**
+       * Move the AABB with the amount of the given array.
+       *
+       * @param {[]} amount The amount to move.
+       */
+      function move(amount) {
+        center[0] += amount[0];
+        center[1] += amount[1];
+      }
+
+      return {
+        intersects: intersects,
+        center: center,
+        extent: extent,
+        move: move
+      };
+
+    });
+
+    /**
      * A center line entity that contains the center line boxes.
      *
      * Note that this entity is not collideable and should not be used in any
@@ -144,12 +190,13 @@ var pong = (function () {
 
       var position = [x, y];
       var size = [width, height];
+      var aabb = AABB(x, y, width, height);
 
       function draw() {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
       }
 
-      return { draw: draw };
+      return { draw: draw, aabb: aabb };
 
     });
 
@@ -167,6 +214,7 @@ var pong = (function () {
 
       var position = [x, y];
       var size = [width, height];
+      var aabb = AABB(x, y, width, height);
       var movement = 0;
 
       function draw() {
@@ -179,6 +227,12 @@ var pong = (function () {
 
       function getMovement() {
         return movement;
+      }
+
+      function move(movement) {
+        position[0] += movement[0];
+        position[1] += movement[1];
+        aabb.move(movement);
       }
 
       function update() {
@@ -207,6 +261,7 @@ var pong = (function () {
 
       var position = [x, y];
       var size = [width, height];
+      var aabb = AABB(x, y, width, height);
 
       function draw() {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
