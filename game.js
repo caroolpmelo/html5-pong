@@ -1,6 +1,10 @@
 var pong = (function () {
 
   var KEY_ENTER = 13;
+  var KEY_UP = 38;
+  var KEY_DOWN = 40;
+  var KEY_W = 87;
+  var KEY_S = 83;
 
   var canvas;
   var canvasCenter;
@@ -61,7 +65,8 @@ var pong = (function () {
      * @param {*} event A key release event from the browser.
      */
     function onKeyUp(event) {
-      if (event.keyCode == KEY_ENTER) {
+      var key = e.keyCode ? e.keyCode : e.which;
+      if (key == KEY_ENTER) {
         setScene(courtScene);
       }
     }
@@ -92,6 +97,13 @@ var pong = (function () {
     var PADDLE_HEIGHT = 100;
     /** A constant edge offset pixels for both paddles. */
     var EDGE_OFFSET = 30;
+
+    /** A movement for the up direction. */
+    var MOVE_UP = -1;
+    /** A movement for being still. */
+    var MOVE_NONE = 0;
+    /** A movement for the down direction. */
+    var MOVE_DOWN = 1;
 
     var background;
     var topWall;
@@ -150,14 +162,37 @@ var pong = (function () {
      */
     var paddle = (function (x, y, width, height) {
 
+      /** The movement velocity for the paddles. */
+      var VELOCITY = 8.0;
+
       var position = [x, y];
       var size = [width, height];
+      var movement = 0;
 
       function draw() {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
       }
 
-      return { draw: draw };
+      function setMovement(direction) {
+        movement = direction;
+      }
+
+      function getMovement() {
+        return movement;
+      }
+
+      function update() {
+        if (movement != 0) {
+          position[1] += movement * VELOCITY;
+        }
+      }
+
+      return {
+        draw: draw,
+        update: update,
+        setMovement: setMovement,
+        getMovement: getMovement
+      };
 
     });
 
@@ -210,16 +245,81 @@ var pong = (function () {
       position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
       size = [BOX_WIDTH, BOX_WIDTH];
       ball = ballBox(position[0], position[1], size[0], size[1]);
+
+      // add button listeners to the document.
+      document.addEventListener("keyup", onKeyUp);
+      document.addEventListener("keydown", onKeyDown);
+    }
+
+    /**
+     * A function that handles court key release events.
+     *
+     * @param {*} event A key release event from the browser.
+     */
+    function onKeyUp(event) {
+      var key = event.keyCode ? event.keyCode : event.which;
+      switch (key) {
+        case KEY_UP:
+          if (rightPaddle.getMovement() == MOVE_UP) {
+            rightPaddle.setMovement(MOVE_NONE);
+          }
+          break;
+        case KEY_DOWN:
+          if (rightPaddle.getMovement() == MOVE_DOWN) {
+            rightPaddle.setMovement(MOVE_NONE);
+          }
+          break;
+        case KEY_W:
+          if (leftPaddle.getMovement() == MOVE_UP) {
+            leftPaddle.setMovement(MOVE_NONE);
+          }
+          break;
+        case KEY_S:
+          if (leftPaddle.getMovement() == MOVE_DOWN) {
+            leftPaddle.setMovement(MOVE_NONE);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    /**
+     * A function that handles court key press events.
+     *
+     * @param {*} event A key press event from the browser.
+     */
+    function onKeyDown(event) {
+      var key = event.keyCode ? event.keyCode : event.which;
+      switch (key) {
+        case KEY_UP:
+          rightPaddle.setMovement(MOVE_UP);
+          break;
+        case KEY_DOWN:
+          rightPaddle.setMovement(MOVE_DOWN);
+          break;
+        case KEY_W:
+          leftPaddle.setMovement(MOVE_UP);
+          break;
+        case KEY_S:
+          leftPaddle.setMovement(MOVE_DOWN);
+          break;
+        default:
+          break;
+      }
     }
 
     /** A function that is called when the game exits the scene. */
     function exit() {
-      // ...
+      // remove button listeners from the document.
+      document.removeEventListener("keyup", onKeyUp);
+      document.removeEventListener("keydown", onKeyDown);
     }
 
     /** A function that is called on each main loop iteration.  */
     function update() {
-      // ...
+      leftPaddle.update();
+      rightPaddle.update();
     }
 
     /** A function that is called on each rendering frame iteration. */
