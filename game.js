@@ -139,6 +139,42 @@ var pong = (function () {
       }
 
       /**
+       * Get the center of the AABB.
+       *
+       * @returns {[]} An array containing the center 2D-coordinates.
+       */
+      function getCenter() {
+        return center;
+      }
+
+      /**
+       * Set the center of the AABB.
+       *
+       * @param {[]} newCenter New center point 2D-coordinates.
+       */
+      function setCenter(newCenter) {
+        center = newCenter;
+      }
+
+      /**
+       * Get the extent of the AABB.
+       *
+       * @return {[]} An array containing the extent in 2D.
+       */
+      function getExtent() {
+        return extent;
+      }
+
+      /**
+       * Set the extent for the AABB.
+       *
+       * @param {[]} newExtent New 2D extent for the AABB.
+       */
+      function setExtent(newExtent) {
+        extent = newExtent;
+      }
+
+      /**
        * Move the AABB with the amount of the given array.
        *
        * @param {[]} amount The amount to move.
@@ -152,6 +188,10 @@ var pong = (function () {
         intersects: intersects,
         center: center,
         extent: extent,
+        getCenter: getCenter,
+        setCenter: setCenter,
+        getExtent: getExtent,
+        setExtent: setExtent,
         move: move
       };
 
@@ -228,15 +268,42 @@ var pong = (function () {
         return movement;
       }
 
-      function move(movement) {
-        position[0] += movement[0];
-        position[1] += movement[1];
-        aabb.move(movement);
-      }
-
       function update() {
         if (movement != 0) {
-          position[1] += movement * VELOCITY;
+          var moveAmount = [0, movement * VELOCITY];
+          position[0] += moveAmount[0];
+          position[1] += moveAmount[1];
+          aabb.move(moveAmount);
+          if (movement == 1) {
+            if (aabb.intersects(bottomWall.aabb)) {
+              // prevent paddle from moving through the wall.
+              position[1] = bottomWall.aabb.center[1];
+              position[1] -= bottomWall.aabb.extent[1];
+              position[1] -= size[1];
+
+              // ensure that the AABB position gets updated as well.
+              var center = [aabb.center[0], position[1]];
+              center[1] += aabb.extent[1];
+              aabb.setCenter(center);
+
+              // stop the movement.
+              movement = 0;
+            }
+          } else {
+            if (aabb.intersects(topWall.aabb)) {
+              // prevent paddle from moving through the wall.
+              position[1] = topWall.aabb.center[1];
+              position[1] += topWall.aabb.extent[1];
+
+              // ensure that the AABB position gets updated as well.
+              var center = [aabb.center[0], position[1]];
+              center[1] += aabb.extent[1];
+              aabb.setCenter(center);
+
+              // stop the movement.
+              movement = 0;
+            }
+          }
         }
       }
 
