@@ -421,14 +421,55 @@ var pong = (function () {
           direction[0] = -direction[0];
         } else if (aabb.intersects(leftGoal.aabb)) {
           console.log("ball in leftGoal");
+          // TODO give a point to right player.
+          resetEntities();
         } else if (aabb.intersects(rightGoal.aabb)) {
           console.log("ball in rightGoal");
+          // TODO give a point to left player.
+          resetEntities();
         }
+      }
+
+      /**
+       * Randomize the ball direction.
+       *
+       * Note here that we use four static directions for the ball.
+       */
+      function randomizeDirection() {
+        var random = Math.floor((Math.random() * 4));
+        switch (random) {
+          case 0:
+            direction = [0.5, 0.5];
+            break;
+          case 1:
+            direction = [0.5, -0.5];
+            break;
+          case 2:
+            direction = [-0.5, 0.5];
+            break;
+          case 3:
+          default:
+            direction = [-0.5, -0.5];
+            break;
+        }
+      }
+
+      /**
+       * Reset the ball state.
+       *
+       * Clears the position and randomizes the movement direction.
+       */
+      function reset() {
+          var halfBox = BOX_WIDTH / 2;
+          position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
+          aabb.setCenter([canvasCenter[0], canvasCenter[1]]);
+          randomizeDirection();
       }
 
       return {
         draw: draw,
-        update: update
+        update: update,
+        reset: reset
       };
 
     });
@@ -446,6 +487,11 @@ var pong = (function () {
 
       return { aabb: aabb };
     });
+
+    /** A function that is called when the game entities must be reset. */
+    function resetEntities() {
+      ball.reset();
+    }
 
     /** A function that is called when the game enters the scene */
     function enter() {
