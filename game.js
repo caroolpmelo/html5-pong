@@ -486,8 +486,6 @@ var pong = (function () {
       position = [canvas.width, 0];
       size = [1000, canvas.height];
       rightGoal = goal(position[0], position[1], size[0], size[1]);
-      console.log(rightGoal.aabb.center);
-      console.log(rightGoal.aabb.extent);
 
       // add button listeners to the document.
       document.addEventListener("keyup", onKeyUp);
