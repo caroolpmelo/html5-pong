@@ -111,6 +111,8 @@ var pong = (function () {
     var leftPaddle;
     var rightPaddle;
     var ball;
+    var leftGoal;
+    var rightGoal;
 
     /**
      * An Axis Aligned Bounding Box implementation for the game.
@@ -417,6 +419,10 @@ var pong = (function () {
 
           // invert the x-axis direction.
           direction[0] = -direction[0];
+        } else if (aabb.intersects(leftGoal.aabb)) {
+          console.log("ball in leftGoal");
+        } else if (aabb.intersects(rightGoal.aabb)) {
+          console.log("ball in rightGoal");
         }
       }
 
@@ -425,6 +431,20 @@ var pong = (function () {
         update: update
       };
 
+    });
+
+    /**
+     * A goal entity that contains definitions for the game goals.
+     * @param {*} x The x-coordinate of the goal position.
+     * @param {*} y The y-coordinate of the goal position.
+     * @param {*} width The width of the goal.
+     * @param {*} height The height of the goal.
+     */
+    var goal = (function (x, y, width, height) {
+
+      var aabb = AABB(x, y, width, height);
+
+      return { aabb: aabb };
     });
 
     /** A function that is called when the game enters the scene */
@@ -456,6 +476,18 @@ var pong = (function () {
       position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
       size = [BOX_WIDTH, BOX_WIDTH];
       ball = ballBox(position[0], position[1], size[0], size[1]);
+
+      // calculate the position and size for the left goal;
+      position = [-1000, 0];
+      size = [1000, canvas.height];
+      leftGoal = goal(position[0], position[1], size[0], size[1]);
+
+      // calculate the position and size for the right goal;
+      position = [canvas.width, 0];
+      size = [1000, canvas.height];
+      rightGoal = goal(position[0], position[1], size[0], size[1]);
+      console.log(rightGoal.aabb.center);
+      console.log(rightGoal.aabb.extent);
 
       // add button listeners to the document.
       document.addEventListener("keyup", onKeyUp);
