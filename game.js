@@ -135,8 +135,8 @@ var pong = (function () {
        * @returns A boolean indicating whether AABBs intersect.
        */
       function intersects(o) {
-        var x = Math.abs(center[0] - o.center[0]) < (extent[0] + o.extent[0]);
-        var y = Math.abs(center[1] - o.center[1]) < (extent[1] + o.extent[1]);
+        var x = Math.abs(this.center[0] - o.center[0]) < (this.extent[0] + o.extent[0]);
+        var y = Math.abs(this.center[1] - o.center[1]) < (this.extent[1] + o.extent[1]);
         return x && y;
       }
 
@@ -146,7 +146,7 @@ var pong = (function () {
        * @returns {[]} An array containing the center 2D-coordinates.
        */
       function getCenter() {
-        return center;
+        return this.center;
       }
 
       /**
@@ -155,7 +155,7 @@ var pong = (function () {
        * @param {[]} newCenter New center point 2D-coordinates.
        */
       function setCenter(newCenter) {
-        center = newCenter;
+        this.center = newCenter;
       }
 
       /**
@@ -164,7 +164,7 @@ var pong = (function () {
        * @return {[]} An array containing the extent in 2D.
        */
       function getExtent() {
-        return extent;
+        return this.extent;
       }
 
       /**
@@ -173,7 +173,7 @@ var pong = (function () {
        * @param {[]} newExtent New 2D extent for the AABB.
        */
       function setExtent(newExtent) {
-        extent = newExtent;
+        this.extent = newExtent;
       }
 
       /**
@@ -182,8 +182,8 @@ var pong = (function () {
        * @param {[]} amount The amount to move.
        */
       function move(amount) {
-        center[0] += amount[0];
-        center[1] += amount[1];
+        this.center[0] += amount[0];
+        this.center[1] += amount[1];
       }
 
       /**
@@ -193,9 +193,9 @@ var pong = (function () {
        */
       function draw() {
         ctx.strokeStyle = "#00ff00";
-        var rect = [center[0], center[1], extent[0], extent[1]];
-        rect[0] -= extent[0];
-        rect[1] -= extent[1];
+        var rect = [this.center[0], this.center[1], this.extent[0], this.extent[1]];
+        rect[0] -= this.extent[0];
+        rect[1] -= this.extent[1];
         rect[2] *= 2;
         rect[3] *= 2;
         ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
