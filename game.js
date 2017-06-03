@@ -523,13 +523,15 @@ var pong = (function () {
       size = [BOX_WIDTH, BOX_WIDTH];
       ball = ballBox(position[0], position[1], size[0], size[1]);
 
-      // calculate the position and size for the left goal;
+      // calculate the position and size for the left goal.
+      // NOTE: we use area where the ball is completely out of the scene.
       position = [-1000, 0];
-      size = [1000, canvas.height];
+      size = [1000 - BOX_WIDTH, canvas.height];
       leftGoal = goal(position[0], position[1], size[0], size[1]);
 
-      // calculate the position and size for the right goal;
-      position = [canvas.width, 0];
+      // calculate the position and size for the right goal.
+      // NOTE: we use area where the ball is completely out of the scene.
+      position = [BOX_WIDTH + canvas.width, 0];
       size = [1000, canvas.height];
       rightGoal = goal(position[0], position[1], size[0], size[1]);
 
