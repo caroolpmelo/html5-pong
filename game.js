@@ -184,6 +184,22 @@ var pong = (function () {
         center[1] += amount[1];
       }
 
+      /**
+       * Draw the AABB boundaries to visualize the bounding box.
+       *
+       * This is helpful when debugging the bounding box.
+       */
+      function draw() {
+        ctx.strokeStyle = "#00ff00";
+        var rect = [center[0], center[1], extent[0], extent[1]];
+        rect[0] -= extent[0];
+        rect[1] -= extent[1];
+        rect[2] *= 2;
+        rect[3] *= 2;
+        ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+        ctx.strokeStyle = "#ffffff";
+      }
+
       return {
         intersects: intersects,
         center: center,
@@ -192,7 +208,8 @@ var pong = (function () {
         setCenter: setCenter,
         getExtent: getExtent,
         setExtent: setExtent,
-        move: move
+        move: move,
+        draw: draw
       };
 
     });
@@ -311,7 +328,8 @@ var pong = (function () {
         draw: draw,
         update: update,
         setMovement: setMovement,
-        getMovement: getMovement
+        getMovement: getMovement,
+        aabb: aabb
       };
 
     });
@@ -325,15 +343,87 @@ var pong = (function () {
      */
     var ballBox = (function (x, y, width, height) {
 
+      /** The movement velocity for the ball. */
+      var VELOCITY = 8.0;
+
       var position = [x, y];
+      var direction = [-0.5, 0.5];
       var size = [width, height];
       var aabb = AABB(x, y, width, height);
 
       function draw() {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
+        aabb.draw();
       }
 
-      return { draw: draw };
+      function update() {
+        // apply a movement for the ball for this tick.
+        var movement = [direction[0] * VELOCITY, direction[1] * VELOCITY];
+        position[0] += movement[0];
+        position[1] += movement[1];
+        aabb.move(movement);
+
+        if (aabb.intersects(bottomWall.aabb)) {
+          // prevent the ball from moving through the wall.
+          position[1] = bottomWall.aabb.center[1];
+          position[1] -= bottomWall.aabb.extent[1];
+          position[1] -= size[1];
+
+          // ensure that the AABB position gets updated as well.
+          var center = [position[0], position[1]];
+          center[0] += aabb.extent[0];
+          center[1] += aabb.extent[1];
+          aabb.setCenter(center);
+
+          // invert the y-axis direction.
+          direction[1] = -direction[1];
+        } else if (aabb.intersects(topWall.aabb)) {
+          // prevent the ball from moving through the wall.
+          position[1] = topWall.aabb.center[1];
+          position[1] += topWall.aabb.extent[1];
+
+          // ensure that the AABB position gets updated as well.
+          var center = [position[0], position[1]];
+          center[0] += aabb.extent[0];
+          center[1] += aabb.extent[1];
+          aabb.setCenter(center);
+
+          // invert the y-axis direction.
+          direction[1] = -direction[1];
+        } else if (aabb.intersects(leftPaddle.aabb)) {
+          // prevent the ball from moving through the paddle.
+          position[0] = leftPaddle.aabb.center[0];
+          position[0] += leftPaddle.aabb.extent[0];
+
+          // ensure that the AABB position gets updated as well.
+          var center = [position[0], position[1]];
+          center[0] += aabb.extent[0];
+          center[1] += aabb.extent[1];
+          aabb.setCenter(center);
+
+          // invert the x-axis direction.
+          direction[0] = -direction[0];
+        } else if (aabb.intersects(rightPaddle.aabb)) {
+          // prevent the ball from moving through the paddle.
+          position[0] = rightPaddle.aabb.center[0];
+          position[0] -= rightPaddle.aabb.extent[0];
+          position[0] -= size[0];
+
+          // ensure that the AABB position gets updated as well.
+          var center = [position[0], position[1]];
+          center[0] += aabb.extent[0];
+          center[1] += aabb.extent[1];
+          aabb.setCenter(center);
+
+          // invert the x-axis direction.
+          direction[0] = -direction[0];
+        }
+      }
+
+      return {
+        draw: draw,
+        update: update
+      };
 
     });
 
@@ -441,6 +531,7 @@ var pong = (function () {
     function update() {
       leftPaddle.update();
       rightPaddle.update();
+      ball.update();
     }
 
     /** A function that is called on each rendering frame iteration. */
