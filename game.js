@@ -11,6 +11,8 @@ var pong = (function () {
   var ctx;
   var scene;
 
+  var scores = [0, 0];
+
   // ==========================================================================
   /**
    * The welcoming scene for the Pong game.
@@ -439,13 +441,19 @@ var pong = (function () {
           // invert the x-axis direction.
           direction[0] = -direction[0];
         } else if (aabb.intersects(leftGoal.aabb)) {
-          console.log("ball in leftGoal");
-          // TODO give a point to right player.
           resetEntities();
+          scores[1] += 1;
+          console.log(scores); // TODO remove
+          if (scores[0] > 9 || scores[1] > 9) {
+            // TODO change to endgameScene
+          }
         } else if (aabb.intersects(rightGoal.aabb)) {
-          console.log("ball in rightGoal");
-          // TODO give a point to left player.
           resetEntities();
+          scores[0] += 1;
+          console.log(scores); // TODO remove
+          if (scores[0] > 9 || scores[1] > 9) {
+            // TODO change to endgameScene
+          }
         }
       }
 
@@ -479,10 +487,10 @@ var pong = (function () {
        * Clears the position and randomizes the movement direction.
        */
       function reset() {
-          var halfBox = BOX_WIDTH / 2;
-          position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
-          aabb.setCenter([canvasCenter[0], canvasCenter[1]]);
-          randomizeDirection();
+        var halfBox = BOX_WIDTH / 2;
+        position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
+        aabb.setCenter([canvasCenter[0], canvasCenter[1]]);
+        randomizeDirection();
       }
 
       return {
@@ -559,6 +567,9 @@ var pong = (function () {
       // add button listeners to the document.
       document.addEventListener("keyup", onKeyUp);
       document.addEventListener("keydown", onKeyDown);
+
+      // reset scores.
+      scores = [0, 0];
     }
 
     /**
