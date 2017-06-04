@@ -67,7 +67,7 @@ var pong = (function () {
      * @param {*} event A key release event from the browser.
      */
     function onKeyUp(event) {
-      var key = e.keyCode ? e.keyCode : e.which;
+      var key = event.keyCode ? event.keyCode : event.which;
       if (key == KEY_ENTER) {
         setScene(courtScene);
       }
