@@ -524,7 +524,6 @@ var pong = (function () {
 
       function draw() {
         ctx.fillRect(position[0], position[1], size[0], size[1]);
-        aabb.draw();
       }
 
       function update() {
