@@ -1,3 +1,21 @@
+/**
+ * A simple and traditional PONG game implementation for the HTML5.
+ *
+ * The idea of this game is based on the legendary Pong game. This version
+ * uses the 2D drawing context from the HTML5 canvas element to draw items
+ * on the screen. Game also uses three different scenes, which also act as
+ * the states of the game. These scenes are following:
+ *
+ * 1. Welcome
+ * 2. Court
+ * 3. EndGame
+ *
+ * Welcome scene contains the welcoming message and the instructions about
+ * how to play the game. Court scene contains the actual game implementation
+ * and the EndGame scene contains the summary of results from the court scene.
+ *
+ * @author J. Toiviainen
+ */
 var pong = (function () {
 
   /** A constant for the enter keycode. */
