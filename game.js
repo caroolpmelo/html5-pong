@@ -326,12 +326,31 @@ var pong = (function () {
         }
       }
 
+      /**
+       * Reset the paddle state.
+       *
+       * Clears the position and randomizes the movement direction.
+       */
+      function reset() {
+        // center the paddle in a vetical axis.
+        position = [x, canvasCenter[1] - size[1] / 2];
+
+        // apply the movement to AABB as well.
+        var extent = aabb.getExtent();
+        var aabbCenter = [position[0] + extent[0], position[1] + extent[1]];
+        aabb.setCenter(aabbCenter);
+
+        // reset the paddle movement.
+        movement = MOVE_NONE;
+      }
+
       return {
         draw: draw,
         update: update,
         setMovement: setMovement,
         getMovement: getMovement,
-        aabb: aabb
+        aabb: aabb,
+        reset: reset
       };
 
     });
@@ -491,6 +510,8 @@ var pong = (function () {
     /** A function that is called when the game entities must be reset. */
     function resetEntities() {
       ball.reset();
+      rightPaddle.reset();
+      leftPaddle.reset();
     }
 
     /** A function that is called when the game enters the scene */
