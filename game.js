@@ -1,9 +1,14 @@
 var pong = (function () {
 
+  /** A constant for the enter keycode. */
   var KEY_ENTER = 13;
+  /** A constant for the up-arrow keycode. */
   var KEY_UP = 38;
+  /** A constant for the down-arrow keycode. */
   var KEY_DOWN = 40;
+  /** A constant for the w-button keycode. */
   var KEY_W = 87;
+  /** A constant for the s-button keycode. */
   var KEY_S = 83;
 
   var canvas;
