@@ -119,6 +119,8 @@ var pong = (function () {
     var leftGoal;
     var rightGoal;
     var remainingPauseTicks = PAUSE_TICKS;
+    var leftScore;
+    var rightScore;
 
     /**
      * An Axis Aligned Bounding Box implementation for the game.
@@ -261,6 +263,143 @@ var pong = (function () {
       }
 
       return { draw: draw, aabb: aabb };
+
+    });
+
+    /**
+     * A number indicator to be used as the player score indicator.
+     * @param {*} x The x-coordinate of the score position.
+     * @param {*} y The y-coordinate of the scoreposition.
+     * @param {*} width The width of the score.
+     * @param {*} height The height of the score.
+     */
+    var numberIndicator = (function (x, y, width, height) {
+
+      var score = 0;
+      var thickness = height / 5;
+
+      /** The index for the topmost horizontal line. */
+      var HLINE_TOP = 0;
+      /** The index for the middle horizontal line. */
+      var HLINE_MIDDLE = 1;
+      /** The index for the bottom horizontal line. */
+      var HLINE_BOTTOM = 2;
+
+      /** The index for the topleft vertical line. */
+      var VLINE_LEFT_TOP = 0;
+      /** The index for the bottomleft vertical line. */
+      var VLINE_LEFT_BOTTOM = 1;
+      /** The index for the topright vertical line. */
+      var VLINE_RIGHT_TOP = 2;
+      /** The index for the bottomright vertical line. */
+      var VLINE_RIGHT_BOTTOM = 3;
+      /** The index for the center vertical line. */
+      var VLINE_CENTER = 4;
+
+      /** Horizontal line draw instructions. */
+      var hlines = [];
+      hlines[HLINE_TOP] = [x, y, width, thickness];
+      hlines[HLINE_MIDDLE] = [x, y + (height / 2) - thickness / 2, width, thickness];
+      hlines[HLINE_BOTTOM] = [x, y + (height - thickness), width, thickness];
+
+      var vlines = [];
+      vlines[VLINE_LEFT_TOP] = [x, y, thickness, height / 2];
+      vlines[VLINE_LEFT_BOTTOM] = [x, y + height / 2, thickness, height / 2];
+      vlines[VLINE_RIGHT_TOP] = [x + width - thickness, y, thickness, height / 2];
+      vlines[VLINE_RIGHT_BOTTOM] = [x + width - thickness, y + height / 2, thickness, height / 2];
+      vlines[VLINE_CENTER] = [x + width / 2 - thickness, y, thickness, height];
+
+      /**
+       * Draw the given line instructions on the canvas.
+       * @param {[]} line A line instruction set to be drawn.
+       */
+      function drawLine(line) {
+        ctx.fillRect(line[0], line[1], line[2], line[3]);
+      }
+
+      function draw() {
+        switch (score) {
+          case 0:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_LEFT_BOTTOM]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 1:
+            drawLine(vlines[VLINE_CENTER]);
+            break;
+          case 2:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_BOTTOM]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            break;
+          case 3:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 4:
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 5:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 6:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_LEFT_BOTTOM]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 7:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 8:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_LEFT_BOTTOM]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          case 9:
+            drawLine(hlines[HLINE_TOP]);
+            drawLine(hlines[HLINE_MIDDLE]);
+            drawLine(hlines[HLINE_BOTTOM]);
+            drawLine(vlines[VLINE_LEFT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_TOP]);
+            drawLine(vlines[VLINE_RIGHT_BOTTOM]);
+            break;
+          default:
+            break;
+        }
+      }
+
+      function setScore(newScore) {
+        score = newScore;
+      }
+
+      return {
+        draw: draw,
+        setScore: setScore
+      };
 
     });
 
@@ -460,6 +599,7 @@ var pong = (function () {
         } else if (aabb.intersects(leftGoal.aabb)) {
           resetEntities();
           scores[1] += 1;
+          rightScore.setScore(scores[1]);
           console.log(scores); // TODO remove
           remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
@@ -468,6 +608,7 @@ var pong = (function () {
         } else if (aabb.intersects(rightGoal.aabb)) {
           resetEntities();
           scores[0] += 1;
+          leftScore.setScore(scores[0]);
           console.log(scores); // TODO remove
           remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
@@ -584,6 +725,15 @@ var pong = (function () {
       size = [1000, canvas.height];
       rightGoal = goal(position[0], position[1], size[0], size[1]);
 
+      // calculate the position and size for the right score.
+      position = [canvasCenter[0] + 70, canvas.height / 10];
+      size = [canvas.width / 10, canvas.height / 6];
+      rightScore = numberIndicator(canvasCenter[0] + 70, position[1], size[0], size[1]);
+
+      // calculate the position and size for the left score.
+      position = [canvasCenter[0] - (70 + size[0]), canvas.height / 10];
+      leftScore = numberIndicator(position[0], position[1], size[0], size[1]);
+
       // add button listeners to the document.
       document.addEventListener("keyup", onKeyUp);
       document.addEventListener("keydown", onKeyDown);
@@ -679,6 +829,10 @@ var pong = (function () {
 
       // draw the center line with small boxes.
       background.draw();
+
+      // draw scores.
+      leftScore.draw();
+      rightScore.draw();
 
       // draw paddles.
       leftPaddle.draw();
