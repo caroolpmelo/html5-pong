@@ -998,7 +998,7 @@ var pong = (function () {
     ctx.textAlign = "center";
 
     // set the welcome scene as the initial scene.
-    setScene(courtScene);
+    setScene(welcomeScene);
   }
 
   function run() {
