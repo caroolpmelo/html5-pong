@@ -107,6 +107,9 @@ var pong = (function () {
     /** A movement for the down direction. */
     var MOVE_DOWN = 1;
 
+    /** The amount of pause ticks to wait at start or after a goal. */
+    var PAUSE_TICKS = 30;
+
     var background;
     var topWall;
     var bottomWall;
@@ -115,6 +118,7 @@ var pong = (function () {
     var ball;
     var leftGoal;
     var rightGoal;
+    var remainingPauseTicks = PAUSE_TICKS;
 
     /**
      * An Axis Aligned Bounding Box implementation for the game.
@@ -457,6 +461,7 @@ var pong = (function () {
           resetEntities();
           scores[1] += 1;
           console.log(scores); // TODO remove
+          remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
             // TODO change to endgameScene
           }
@@ -464,6 +469,7 @@ var pong = (function () {
           resetEntities();
           scores[0] += 1;
           console.log(scores); // TODO remove
+          remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
             // TODO change to endgameScene
           }
@@ -653,9 +659,13 @@ var pong = (function () {
 
     /** A function that is called on each main loop iteration.  */
     function update() {
-      leftPaddle.update();
-      rightPaddle.update();
-      ball.update();
+      if (remainingPauseTicks <= 0) {
+        leftPaddle.update();
+        rightPaddle.update();
+        ball.update();
+      } else {
+        remainingPauseTicks--;
+      }
     }
 
     /** A function that is called on each rendering frame iteration. */
