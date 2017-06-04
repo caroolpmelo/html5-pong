@@ -600,19 +600,17 @@ var pong = (function () {
           resetEntities();
           scores[1] += 1;
           rightScore.setScore(scores[1]);
-          console.log(scores); // TODO remove
           remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
-            // TODO change to endgameScene
+            setScene(endGameScene);
           }
         } else if (aabb.intersects(rightGoal.aabb)) {
           resetEntities();
           scores[0] += 1;
           leftScore.setScore(scores[0]);
-          console.log(scores); // TODO remove
           remainingPauseTicks = PAUSE_TICKS;
           if (scores[0] > 9 || scores[1] > 9) {
-            // TODO change to endgameScene
+            setScene(endGameScene);
           }
         }
       }
@@ -849,6 +847,78 @@ var pong = (function () {
       draw: draw
     }
 
+  })();
+
+  // ==========================================================================
+  /**
+   * The end game scene for the Pong game.
+   *
+   * This scene is the summary scene which will be show to the users when
+   * they have played the game. Scene contains the information about the overall
+   * results of the game as well as the instructions how to proceed back into the
+   * instructions scene.
+   */
+  var endGameScene = (function () {
+    /** A function that is called when the game enters the scene */
+    function enter() {
+      document.addEventListener("keyup", onKeyUp);
+    }
+
+    /** A function that is called when the game exits the scene. */
+    function exit() {
+      document.removeEventListener("keyup", onKeyUp);
+    }
+
+    /** A function that is called on each main loop iteration.  */
+    function update() {
+      // ... no implementation required
+    }
+
+    /** A function that is called on each rendering frame iteration. */
+    function draw() {
+      // clear the current contents from the canvas.
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // draw the application name string.
+      ctx.font = "32pt Arial";
+      ctx.fillText("HTML5 PONG - RESULTS", canvasCenter[0], 100);
+
+      // draw the controls string.
+      ctx.font = "18pt Arial";
+      ctx.fillText("Game has ended", canvasCenter[0], 200);
+      if (scores[0] > 9) {
+        ctx.fillText("Left player won the game!", canvasCenter[0], 240);
+      } else {
+        ctx.fillText("Right player won the game!", canvasCenter[0], 240);
+      }
+      ctx.fillText("End results:", canvasCenter[0], 300);
+      ctx.fillText(scores[0] + " - " + scores[1], canvasCenter[0], 340);
+
+      // draw the instructions how to proceed text.
+      ctx.fillText("Press [ENTER] to proceed", canvasCenter[0], 500);
+    }
+
+    /**
+     * A key listener to detect when a user key press is released.
+     *
+     * This implementation will detect only enter presses, which will trigger
+     * a new state transition from the end game scene to the welcome scene.
+     *
+     * @param {*} event A key release event from the browser.
+     */
+    function onKeyUp(event) {
+      var key = event.keyCode ? event.keyCode : event.which;
+      if (key == KEY_ENTER) {
+        setScene(welcomeScene);
+      }
+    }
+
+    return {
+      enter: enter,
+      exit: exit,
+      update: update,
+      draw: draw
+    }
   })();
 
   // ==========================================================================
