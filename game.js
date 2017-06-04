@@ -366,9 +366,14 @@ var pong = (function () {
      */
     var ballBox = (function (x, y, width, height) {
 
-      /** The movement velocity for the ball. */
-      var VELOCITY = 8.0;
+      /** The initial velocity for the ball. */
+      var INITIAL_VELOCITY = 8.0;
+      /** The amount of velocity to be added on each paddle hit. */
+      var VELOCITY_INCREASE = 1.0;
+      /** The maximum velocity for the ball. */
+      var MAX_VELOCITY = 15.0;
 
+      var velocity = INITIAL_VELOCITY;
       var position = [x, y];
       var direction = [-0.5, 0.5];
       var size = [width, height];
@@ -381,7 +386,7 @@ var pong = (function () {
 
       function update() {
         // apply a movement for the ball for this tick.
-        var movement = [direction[0] * VELOCITY, direction[1] * VELOCITY];
+        var movement = [direction[0] * velocity, direction[1] * velocity];
         position[0] += movement[0];
         position[1] += movement[1];
         aabb.move(movement);
@@ -426,6 +431,10 @@ var pong = (function () {
 
           // invert the x-axis direction.
           direction[0] = -direction[0];
+
+          // increase the velocity if possible.
+          velocity += VELOCITY_INCREASE;
+          velocity = Math.min(velocity, MAX_VELOCITY);
         } else if (aabb.intersects(rightPaddle.aabb)) {
           // prevent the ball from moving through the paddle.
           position[0] = rightPaddle.aabb.center[0];
@@ -440,6 +449,10 @@ var pong = (function () {
 
           // invert the x-axis direction.
           direction[0] = -direction[0];
+
+          // increase the velocity if possible.
+          velocity += VELOCITY_INCREASE;
+          velocity = Math.min(velocity, MAX_VELOCITY);
         } else if (aabb.intersects(leftGoal.aabb)) {
           resetEntities();
           scores[1] += 1;
@@ -491,6 +504,7 @@ var pong = (function () {
         position = [canvasCenter[0] - halfBox, canvasCenter[1] - halfBox];
         aabb.setCenter([canvasCenter[0], canvasCenter[1]]);
         randomizeDirection();
+        velocity = INITIAL_VELOCITY;
       }
 
       return {
