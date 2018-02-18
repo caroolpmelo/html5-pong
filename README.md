@@ -3,7 +3,7 @@ A HTML5 implementation of the classic Pong game.
 
 Contains a single game mode where two human players can play against each other.
 
-Game can be played [here].(https://toivjon.github.io/html5-pong/)
+Game can be played [here](https://toivjon.github.io/html5-pong/).
 
 ## Scenes
 Game is split into following scenes:
