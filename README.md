@@ -5,6 +5,8 @@ Contains a single game mode where two human players can play against each other.
 
 The game is playable in the URL: https://toivjon.github.io/html5-pong/
 
+Development blog entry: https://toivjon.wordpress.com/2017/06/04/html5-pong/
+
 ## Scenes
 Game is split into following scenes:
 1. A welcome scene, which contains the main menu.
